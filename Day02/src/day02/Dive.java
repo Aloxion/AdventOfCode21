@@ -40,16 +40,20 @@ public class Dive {
     public static int navHandler(List<Command> data){
         int horizontalPos = 0;
         int depth = 0;
+        int aim = 0;
         int i = 0;
         while (i < data.size()){
             if (data.get(i).getDirection().equals("forward")) {
                 horizontalPos += data.get(i).getValue();
+                depth += aim*data.get(i).getValue();
                 i++;
             } else if (data.get(i).getDirection().equals("up")) {
-                depth -= data.get(i).getValue();
+                //depth -= data.get(i).getValue();
+                aim -= data.get(i).getValue();
                 i++;
             } else if (data.get(i).getDirection().equals("down")) {
-                depth += data.get(i).getValue();
+                //depth += data.get(i).getValue();
+                aim += data.get(i).getValue();
                 i++;
             }
         }
