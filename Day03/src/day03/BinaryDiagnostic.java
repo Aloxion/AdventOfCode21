@@ -5,14 +5,11 @@ import java.io.FileNotFoundException;
 import java.util.*;
 
 public class BinaryDiagnostic {
-    static int count;
 
     public static void main(String[] args) {
         ArrayList<String> data = new ArrayList<>();
-
         readFile(data);
-        convertData(data);
-        System.out.println(convertData((data)));
+        findCommon(data);
     }
 
     public static ArrayList<String> readFile(ArrayList<String> data) {
@@ -27,35 +24,51 @@ public class BinaryDiagnostic {
         return data;
     }
 
-    public static int convertData(ArrayList<String> data){
-    ArrayList<Integer> finalBinary = new ArrayList<>();
-    int sumOfOnes = 0;
-    int sumOfZeros = 0;
-    int gammaRate = 0;
-    int epsilonRate = 0;
-    int row = 0;
-    int result = 0;
-    for (int i = 0; i < String.valueOf(data.get(0)).length(); i++) {
-        for (int k = 0; k < data.size(); k++){
-            for (int j = 0; j < row; j++){
-                 if (Integer.valueOf(data.get(i).substring(0, j)) == 1){
-                sumOfOnes += 1;
-                } else if(Integer.valueOf(data.get(i).substring(0, j)) == 0){
-                sumOfZeros+= 1;
+    public static void findCommon(ArrayList<String> data) {
+        int prev = 0;
+        int current = 0;
+        String gammaRate = "";
+        String epsilonRate = "";
+        for (int k = 0; k < String.valueOf(data.get(0)).length(); k++) {
+            ArrayList<String> one = new ArrayList<>();
+            ArrayList<String> zero = new ArrayList<>();
+            prev = current;
+            current++;
+            for (int j = 0; j < data.size(); j++){
+                if (data.get(j).substring(prev, current).equals("1")) {
+                    one.add(data.get(j).substring(prev, current));
+                }
+                if (data.get(j).substring(prev, current).equals("0")) {
+                    zero.add(data.get(j).substring(prev, current));
                 }
             }
-            row++;
-            if (sumOfOnes > sumOfZeros){
-                finalBinary.add(1);
+            if (one.size() > zero.size()) {
+                gammaRate = gammaRate + "1";
+                epsilonRate = epsilonRate + "0";
             } else {
-                finalBinary.add(0);
+                gammaRate = gammaRate + "0";
+                epsilonRate = epsilonRate + "1";
             }
         }
-    }
-    for (int h = 0; h < finalBinary.size(); h++){
-        result =+ finalBinary.get(h);
-    }
-    return result;
+        powerConsumption(gammaRate, epsilonRate);
     }
 
+    public static int powerConsumption(String gammaRate, String epsilonRate) {
+        int gammaRateNum = 0;
+        int epsilonRateNum = 0;
+        for (int k = 0; k < gammaRate.length(); k++) {
+            char ch1 = gammaRate.charAt(gammaRate.length()-1-k);
+            if (ch1 == '1') {
+                gammaRateNum += Math.pow(2, k);
+            }
+        }
+        for (int k = 0; k < epsilonRate.length(); k++) {
+            char ch2 = epsilonRate.charAt(epsilonRate.length()-1-k);
+            if (ch2 == '1') {
+                epsilonRateNum += Math.pow(2, k);
+            }
+        }
+        System.out.println(gammaRateNum*epsilonRateNum);
+        return gammaRateNum * epsilonRateNum;
+    }
 }
